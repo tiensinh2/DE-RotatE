@@ -15,7 +15,8 @@ class Params:
                  neg_ratio=20, 
                  dropout=0.4,  
                  save_each=50,  
-                 se_prop=0.9 ):
+                 se_prop=0.9,
+                 period=7 ):
 
         self.ne = ne
         self.bsize = bsize
@@ -27,6 +28,7 @@ class Params:
         self.neg_ratio = neg_ratio
         self.dropout = dropout
         self.se_prop = se_prop
+        self.period = period
         
     def str_(self):
         return str(self.ne) + "_" + str(self.bsize) + "_" + str(self.lr) + "_" + str(self.reg_lambda) + "_" + str(self.s_emb_dim) + "_" + str(self.neg_ratio) + "_" + str(self.dropout) + "_" + str(self.t_emb_dim) + "_" + str(self.save_each) + "_" + str(self.se_prop) 

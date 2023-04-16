@@ -14,6 +14,7 @@ from de_simple import DE_SimplE
 from de_hake1 import DE_HAKE1
 from de_hake import DE_HAKE
 from de_paire import DE_PaiRE
+from de_rotate import DE_RotatE
 from measure import Measure
 
 class Tester:
