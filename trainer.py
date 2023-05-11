@@ -18,6 +18,9 @@ from de_hake1 import DE_HAKE1
 from de_hake import DE_HAKE
 from de_paire import DE_PaiRE
 from de_rotate import DE_RotatE
+from de_complex import DE_ComplEx
+from de_quatde import DE_QuatDE
+from de_convkb import DE_ConvKB
 from tester import Tester
 
 class Trainer:

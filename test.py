@@ -25,6 +25,7 @@ parser.add_argument('-dropout', help='Dropout probability', type=float, default=
 parser.add_argument('-save_each', help='Save model and validate each K epochs', type=int, default=20, choices = [20])
 parser.add_argument('-se_prop', help='Static embedding proportion', type=float, default=0.36)
 parser.add_argument('-period', type=int, default=7)
+parser.add_argument('-save_dir', type=str)
 
 args = parser.parse_args()
 
@@ -43,26 +44,7 @@ params = Params(
     period=args.period,
 )
 
-trainer = Trainer(dataset, params, args.model)
-trainer.train()
-
-# validating the trained models. we seect the model that has the best validation performance as the fina model
-validation_idx = [str(int(args.save_each * (i + 1))) for i in range(args.ne // args.save_each)]
-best_mrr = -1.0
-best_index = '0'
-model_prefix = "models/" + args.model + "/" + args.dataset + "/" + params.str_() + "_"
-
-for idx in validation_idx:
-    model_path = model_prefix + idx + ".chkpnt"
-    tester = Tester(dataset, model_path, "valid")
-    mrr = tester.test()
-    if mrr > best_mrr:
-        best_mrr = mrr
-        best_index = idx
-
-# testing the best chosen model on the test set
-print("Best epoch: " + best_index)
-model_path = model_prefix + best_index + ".chkpnt"
-tester = Tester(dataset, model_path, "test")
+print("Testing...")
+tester = Tester(dataset, args.save_dir, "test")
 tester.test()
 
