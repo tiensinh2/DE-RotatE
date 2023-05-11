@@ -72,6 +72,8 @@ class DE_RotatE(torch.nn.Module):
 
         self.time_t = nn.Embedding((32*12*1)//self.params.period + 1, self.params.t_emb_dim).cuda()
         self.time_h = nn.Embedding(((32*12*1))//self.params.period + 1, self.params.t_emb_dim).cuda()
+        # self.time_t = nn.Embedding((32*12*11)//self.params.period + 1, self.params.t_emb_dim).cuda()
+        # self.time_h = nn.Embedding(((32*12*11))//self.params.period + 1, self.params.t_emb_dim).cuda()
 
         nn.init.xavier_uniform_(self.time_t.weight)
         nn.init.xavier_uniform_(self.time_h.weight)
@@ -99,6 +101,7 @@ class DE_RotatE(torch.nn.Module):
 
     def get_time_embedd(self, entities, years, months, days, h_or_t):
         times = ((days-1) + (months-1) * 32)//self.params.period
+        # times = ((days-1) + (months-1) * 32 + (years - 2005) * 366)//self.params.period
         times = times.long()
 
         years = years - 2010
