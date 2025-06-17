@@ -22,7 +22,7 @@ from measure import Measure
 
 class Tester:
     def __init__(self, dataset, model_path, valid_or_test):
-        self.model = torch.load(model_path)
+        self.model = torch.load(model_path, weights_only=False)
         self.model.eval()
         self.dataset = dataset
         self.valid_or_test = valid_or_test
