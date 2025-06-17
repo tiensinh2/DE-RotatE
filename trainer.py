@@ -33,42 +33,56 @@ class Trainer:
         
     def train(self, early_stop=False):
         self.model.train()
-        
+
         optimizer = torch.optim.Adam(
             self.model.parameters(), 
             lr=self.params.lr, 
             weight_decay=self.params.reg_lambda
-        ) #weight_decay corresponds to L2 regularization
-        
+        )
+
         loss_f = nn.CrossEntropyLoss()
-        
+
+        total_start_time = time.time()  # ⏱️ Bắt đầu đo thời gian tổng
+
         for epoch in range(1, self.params.ne + 1):
+            epoch_start_time = time.time()
+
             last_batch = False
             total_loss = 0.0
-            start = time.time()
-            
+
             while not last_batch:
                 optimizer.zero_grad()
-                
-                heads, rels, tails, years, months, days = self.dataset.nextBatch(self.params.bsize, neg_ratio=self.params.neg_ratio)
+
+                heads, rels, tails, years, months, days = self.dataset.nextBatch(
+                    self.params.bsize, neg_ratio=self.params.neg_ratio
+                )
                 last_batch = self.dataset.wasLastBatch()
-                
+
                 scores = self.model(heads, rels, tails, years, months, days)
-                
-                ###Added for softmax####
+
                 num_examples = int(heads.shape[0] / (1 + self.params.neg_ratio))
-                scores_reshaped = scores.view(num_examples, self.params.neg_ratio+1)
-                l = torch.zeros(num_examples).long().cuda()
-                loss = loss_f(scores_reshaped, l)
+                scores = scores.view(num_examples, self.params.neg_ratio + 1)
+                labels = torch.zeros(num_examples).long().cuda()
+                loss = loss_f(scores, labels)
+
                 loss.backward()
                 optimizer.step()
-                total_loss += loss.cpu().item()
-                
-            print(time.time() - start)
-            print("Loss in iteration " + str(epoch) + ": " + str(total_loss) + "(" + self.model_name + "," + self.dataset.name + ")")
-            
+
+                total_loss += loss.item()
+
+            epoch_end_time = time.time()
+            epoch_duration = epoch_end_time - epoch_start_time
+
+            print(f"⏱️ Epoch {epoch}/{self.params.ne} mất {epoch_duration:.2f} giây")
+            print(f"📉 Loss epoch {epoch}: {total_loss:.4f} ({self.model_name}, {self.dataset.name})")
+
             if epoch % self.params.save_each == 0:
                 self.saveModel(epoch)
+
+        total_end_time = time.time()
+        total_duration = total_end_time - total_start_time
+
+        print(f"\n✅ Tổng thời gian huấn luyện: {total_duration:.2f} giây")
             
     def saveModel(self, chkpnt):
         print("Saving the model")
