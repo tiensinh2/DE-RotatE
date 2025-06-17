@@ -32,7 +32,11 @@ class Trainer:
         self.params = params
         
     def train(self, early_stop=False):
+        
         self.model.train()
+        num_params = sum(p.numel() for p in self.model.parameters())
+        print(f"🔢 Số lượng tham số của mô hình: {num_params:,}")
+
 
         optimizer = torch.optim.Adam(
             self.model.parameters(), 
