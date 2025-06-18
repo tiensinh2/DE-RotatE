@@ -20,7 +20,7 @@ parser.add_argument('-bsize', help='Batch size', type=int, default=512, choices 
 parser.add_argument('-lr', help='Learning rate', type=float, default=0.001)
 parser.add_argument('-reg_lambda', help='L2 regularization parameter', type=float, default=0.0, choices = [0.0])
 parser.add_argument('-emb_dim', help='Embedding dimension', type=int, default=100)
-parser.add_argument('-neg_ratio', help='Negative ratio', type=int, default=100, choices = [500,100])
+parser.add_argument('-neg_ratio', help='Negative ratio', type=int, default=500, choices = [500])
 parser.add_argument('-dropout', help='Dropout probability', type=float, default=0.4)
 parser.add_argument('-save_each', help='Save model and validate each K epochs', type=int, default=20, choices = [20,1])
 parser.add_argument('-se_prop', help='Static embedding proportion', type=float, default=0.36)
