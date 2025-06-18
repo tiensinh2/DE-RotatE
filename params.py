@@ -7,7 +7,7 @@
 class Params:
 
     def __init__(self, 
-                 ne=500, 
+                 ne=100, 
                  bsize=512, 
                  lr=0.001, 
                  reg_lambda=0.0, 
