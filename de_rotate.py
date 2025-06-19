@@ -34,7 +34,7 @@ class DE_RotatE(torch.nn.Module):
 
         # Đây là thông số bổ xung để chuẩn hóa giá trị loss (của RotatE)
         self.gamma = nn.Parameter(
-            torch.Tensor([12]),
+            torch.Tensor([18]),
             requires_grad=False
         )
 
