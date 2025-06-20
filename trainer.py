@@ -4,6 +4,7 @@
 # This source code is licensed under the license found in the
 # LICENSE file in the root directory of this source tree.
 #
+
 import os
 import time
 import torch
@@ -11,6 +12,8 @@ import torch.nn as nn
 import torch.nn.functional as F
 from dataset import Dataset
 from params import Params
+
+# Import các mô hình DE
 from de_distmult import DE_DistMult
 from de_transe import DE_TransE
 from de_simple import DE_SimplE
@@ -21,22 +24,26 @@ from de_rotate import DE_RotatE
 from de_complex import DE_ComplEx
 from de_quatde import DE_QuatDE
 from de_convkb import DE_ConvKB
+
 from tester import Tester
 
 class Trainer:
     def __init__(self, dataset, params, model_name):
         instance_gen = globals()[model_name]
         self.model_name = model_name
-        self.model = nn.DataParallel(instance_gen(dataset=dataset, params=params))
+
+        # 🔧 Khởi tạo model và chuyển sang GPU đúng cách
+        self.model = instance_gen(dataset=dataset, params=params)  # tạo mô hình
+        self.model = self.model.to('cuda')                         # chuyển toàn bộ model sang GPU
+        self.model = nn.DataParallel(self.model)                   # bọc bằng DataParallel (nếu có nhiều GPU)
+
         self.dataset = dataset
         self.params = params
-        
+
     def train(self, early_stop=False):
-        
         self.model.train()
         num_params = sum(p.numel() for p in self.model.parameters())
         print(f"🔢 Số lượng tham số của mô hình: {num_params:,}")
-
 
         optimizer = torch.optim.Adam(
             self.model.parameters(), 
@@ -62,13 +69,16 @@ class Trainer:
                 )
                 last_batch = self.dataset.wasLastBatch()
 
+                # forward
                 scores = self.model(heads, rels, tails, years, months, days)
 
                 num_examples = int(heads.shape[0] / (1 + self.params.neg_ratio))
                 scores = scores.view(num_examples, self.params.neg_ratio + 1)
-                labels = torch.zeros(num_examples).long().cuda()
-                loss = loss_f(scores, labels)
 
+                # ⚠️ label đúng là vị trí 0 (positive sample)
+                labels = torch.zeros(num_examples).long().cuda()
+
+                loss = loss_f(scores, labels)
                 loss.backward()
                 optimizer.step()
 
@@ -85,15 +95,14 @@ class Trainer:
 
         total_end_time = time.time()
         total_duration = total_end_time - total_start_time
-
         print(f"\n✅ Tổng thời gian huấn luyện: {total_duration:.2f} giây")
-            
+
     def saveModel(self, chkpnt):
-        print("Saving the model")
-        directory = "models/" + self.model_name + "/" + self.dataset.name + "/"
+        print("💾 Đang lưu mô hình...")
+        directory = f"models/{self.model_name}/{self.dataset.name}/"
         if not os.path.exists(directory):
             os.makedirs(directory)
-            
-        torch.save(self.model, directory + self.params.str_() + "_" + str(chkpnt) + ".chkpnt")
-        
-    
+
+        model_path = directory + self.params.str_() + f"_{chkpnt}.chkpnt"
+        torch.save(self.model, model_path)
+        print(f"✅ Đã lưu: {model_path}")
