@@ -23,7 +23,7 @@ class DE_RotatE(torch.nn.Module):
         nn.init.xavier_uniform_(self.ent_embs_t.weight)
         nn.init.xavier_uniform_(self.rel_embs.weight)
 
-        self.gamma = nn.Parameter(torch.Tensor([12]), requires_grad=False)
+        self.gamma = nn.Parameter(torch.Tensor([18]), requires_grad=False)
         self.embedding_range = nn.Parameter(
             torch.Tensor([(self.gamma.item() + 2) / (params.s_emb_dim + params.t_emb_dim)]),
             requires_grad=False
