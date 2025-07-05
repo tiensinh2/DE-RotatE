@@ -15,7 +15,7 @@ parser = argparse.ArgumentParser(description=desc)
 
 parser.add_argument('-dataset', help='Dataset', type=str, default='icews05-15', choices = ['icews14', 'icews05-15', 'gdelt'])
 parser.add_argument('-model', help='Model', type=str, default='DE_RotatE', choices = ['DE_DistMult', 'DE_TransE', 'DE_SimplE', 'DE_HAKE', 'DE_HAKE1', 'DE_PaiRE', 'DE_RotatE', 'DE_ComplEx', 'DE_QuatDE', 'DE_ConvKB'])
-parser.add_argument('-ne', help='Number of epochs', type=int, default=120)
+parser.add_argument('-ne', help='Number of epochs', type=int, default=600)
 parser.add_argument('-bsize', help='Batch size', type=int, default=512, choices = [512])
 parser.add_argument('-lr', help='Learning rate', type=float, default=0.001)
 parser.add_argument('-reg_lambda', help='L2 regularization parameter', type=float, default=0.0, choices = [0.0])
